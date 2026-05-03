@@ -1,9 +1,0 @@
-Gotowe! Oto jak działa apka:
-Dwa tryby generowania:
-
-📷 Zdjęcia — wgraj do 5 fotek notatek, stron z podręcznika, slajdów — AI je odczyta i wygeneruje pytania
-✏️ Temat — wpisz nazwę tematu (np. "Fotosynteza") i opcjonalnie dodatkowe szczegóły
-
-Suwak pozwala ustawić od 3 do 20 pytań.
-Po kliknięciu „Generuj Quiz" Claude Sonnet analizuje materiał i zwraca pytania w tym samym formacie co Twój questions.json — 4 odpowiedzi, 1 prawidłowa, losowa kolejność. Quiz i ekran wyników działają identycznie jak w Twoim szablonie.
-Jeśli chcesz, mogę też przygotować to jako samodzielne pliki HTML (jak Twój index.html) gotowe do hostowania na serwerze.
