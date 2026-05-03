@@ -50,35 +50,51 @@
   .empty-icon{font-size:48px;margin-bottom:12px;}
   .empty-text{font-size:1rem;font-weight:600;}
 
-  /* GENERATOR */
-  #gen-page .header{text-align:center;padding:10px 0 24px;}
-  #gen-page .header h2{color:#fff;font-size:1.6rem;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,0.25);}
+  /* GENERATOR — header */
+  .gen-header{text-align:center;padding:28px 0 22px;}
+  .gen-logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;}
+  .gen-logo-img{width:52px;height:52px;border-radius:16px;}
+  .gen-title{color:#fff;font-size:2rem;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,0.3);}
+  .gen-subtitle{color:#d8f3dc;font-size:.97rem;font-weight:600;}
+
+  /* GENERATOR — tabs */
   .mode-tabs{display:flex;gap:6px;background:#f1f3f4;border-radius:12px;padding:4px;margin-bottom:22px;}
-  .tab{flex:1;padding:10px;border:none;background:transparent;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;color:#6c757d;transition:all .2s;}
+  .tab{flex:1;padding:12px;border:none;background:transparent;border-radius:10px;font-family:'Nunito',sans-serif;font-size:1.35rem;cursor:pointer;color:#adb5bd;transition:all .2s;}
   .tab.active{background:#fff;color:#2d6a4f;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
   .tab-panel{display:none;}
   .tab-panel.active{display:block;}
-  label{display:block;font-size:.8rem;font-weight:700;color:#495057;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
+
+  /* GENERATOR — form */
+  label{display:block;font-size:.78rem;font-weight:700;color:#495057;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;}
   input[type=text],textarea{width:100%;padding:12px 14px;border:2px solid #dee2e6;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s;color:#1b1b1b;}
   input[type=text]:focus,textarea:focus{border-color:#52b788;}
   textarea{resize:vertical;min-height:90px;}
-  .drop-zone{border:2px dashed #dee2e6;border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+  .drop-zone{border:2px dashed #b7e4c7;border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
   .drop-zone:hover,.drop-zone.drag{border-color:#52b788;background:#f0faf5;}
   .drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
-  .drop-icon{font-size:30px;margin-bottom:6px;}
-  .drop-text{color:#6c757d;font-size:.9rem;}
-  .drop-text strong{color:#2d6a4f;}
+  .drop-icon{font-size:32px;margin-bottom:8px;}
+  .drop-text{color:#40916c;font-size:.9rem;line-height:1.5;}
+  .drop-text strong{color:#2d6a4f;font-weight:700;}
+  .drop-hint{display:block;font-size:.78rem;color:#52b788;margin-top:3px;}
   .previews{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
   .preview-wrap{position:relative;display:inline-block;}
   .preview-img{width:68px;height:68px;object-fit:cover;border-radius:8px;border:2px solid #dee2e6;display:block;}
   .preview-wrap button{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#dc3545;color:#fff;border:none;font-size:10px;cursor:pointer;line-height:18px;padding:0;font-weight:700;}
-  .count-row{display:flex;align-items:center;gap:12px;margin-top:18px;}
+  .count-row{display:flex;align-items:center;gap:12px;margin-top:20px;}
   .count-row label{margin:0;white-space:nowrap;}
   input[type=range]{flex:1;accent-color:#52b788;}
-  .count-val{font-weight:800;color:#2d6a4f;min-width:28px;text-align:right;}
+  .count-val{font-weight:800;color:#2d6a4f;min-width:28px;text-align:right;font-size:1.05rem;}
   .error-box{background:#f8d7da;border:1px solid #f5c6cb;border-radius:12px;padding:12px 14px;color:#721c24;font-size:.9rem;margin-top:12px;}
   .back-btn{color:#d8f3dc;font-size:.85rem;font-weight:700;cursor:pointer;background:none;border:none;font-family:'Nunito',sans-serif;margin-bottom:4px;display:flex;align-items:center;gap:4px;}
   .back-btn:hover{color:#fff;}
+
+  /* GENERATOR — generate button + down arrow */
+  .btn-gen-row{text-align:center;margin-top:18px;}
+  .btn-gen{background:linear-gradient(135deg,#52b788,#2d6a4f);color:#fff;border:none;border-radius:14px;padding:14px 36px;font-size:1rem;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;width:100%;transition:transform .15s,box-shadow .15s;}
+  .btn-gen:hover{transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,0,0,0.2);}
+  .down-arrow-wrap{text-align:center;margin-top:22px;padding-bottom:10px;}
+  .down-arrow-btn{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;background:rgba(0,0,0,0.45);border-radius:50%;border:none;color:#fff;font-size:20px;cursor:pointer;transition:background .2s;}
+  .down-arrow-btn:hover{background:rgba(0,0,0,0.65);}
 
   /* LOADING */
   #loading-page{text-align:center;padding:100px 20px;}
@@ -122,7 +138,7 @@
   .rv-a{font-size:.85rem;color:#495057;}
   .correct-lbl{color:#28a745;font-weight:700;}
   .wrong-lbl{color:#dc3545;}
-  .hidden{display:none;}
+  .hidden{display:none !important;}
 
   /* Confirm modal */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
@@ -145,10 +161,11 @@
 <!-- ================================================
   STRONA: BIBLIOTEKA QUIZÓW
 ================================================ -->
-<div id="library-page" class="page active">
+<div id="library-page" class="page">
   <div class="wrap">
     <div class="topbar">
       <div class="logo"><span class="logo-icon">🧠</span> QuizGen AI</div>
+      <button class="nav-link" onclick="goTo('gen-page')">✕ Zamknij</button>
     </div>
     <div class="header">
       <h1>Moje Quizy</h1>
@@ -164,25 +181,31 @@
 <!-- ================================================
   STRONA: GENERATOR
 ================================================ -->
-<div id="gen-page" class="page">
+<div id="gen-page" class="page active">
   <div class="wrap">
-    <div class="topbar">
-      <div class="logo"><span class="logo-icon">🧠</span> QuizGen AI</div>
-      <button class="nav-link" onclick="goTo('library-page')">← Biblioteka</button>
+    <div class="gen-header">
+      <div class="gen-logo-row">
+        <img src="quiz_logo.png" class="gen-logo-img" alt="QuizGen AI">
+        <span class="gen-title">QuizGen AI</span>
+      </div>
+      <p class="gen-subtitle">Wgraj zdjęcia notatek lub wpisz temat — AI wygeneruje quiz!</p>
     </div>
-    <div class="header"><h2>Utwórz nowy quiz</h2></div>
+
     <div class="card">
       <div class="mode-tabs">
-        <button class="tab active" onclick="switchTab('photo')">📷 Zdjęcia</button>
-        <button class="tab" onclick="switchTab('topic')">✏️ Temat</button>
+        <button class="tab active" onclick="switchTab('photo')">📷</button>
+        <button class="tab" onclick="switchTab('topic')">✏️</button>
       </div>
 
       <div id="tab-photo" class="tab-panel active">
-        <label>Zdjęcia notatek / stron podręcznika (maks. 5)</label>
+        <label>Zdjęcia notatek / stron podręcznika</label>
         <div class="drop-zone" id="drop-zone">
           <input type="file" id="file-input" accept="image/*" multiple onchange="handleFiles(this.files)">
-          <div class="drop-icon">📸</div>
-          <div class="drop-text"><strong>Kliknij lub przeciągnij</strong> zdjęcia tutaj<br><span style="font-size:.8rem">JPG, PNG, WEBP</span></div>
+          <div class="drop-icon">📷</div>
+          <div class="drop-text">
+            <strong>Kliknij lub przeciągnij</strong> zdjęcia tutaj
+            <span class="drop-hint">JPG, PNG, WEBP — maks. 5 zdjęć</span>
+          </div>
         </div>
         <div class="previews" id="previews"></div>
       </div>
@@ -203,7 +226,13 @@
       </div>
 
       <div id="gen-error" class="error-box hidden"></div>
-      <button class="btn btn-primary btn-block" onclick="generateQuiz()">🚀 Generuj Quiz</button>
+      <div class="btn-gen-row">
+        <button class="btn-gen" onclick="generateQuiz()">Generuj Quiz</button>
+      </div>
+    </div>
+
+    <div class="down-arrow-wrap">
+      <button class="down-arrow-btn" onclick="goTo('library-page')" title="Moje quizy">↓</button>
     </div>
   </div>
 </div>
@@ -437,7 +466,7 @@ async function generateQuiz() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 4000,
         system: 'Jesteś ekspertem od tworzenia quizów edukacyjnych. Odpowiadasz WYŁĄCZNIE czystym JSON-em bez żadnych komentarzy ani markdown.',
         messages
@@ -461,7 +490,7 @@ async function generateQuiz() {
 function buildPrompt(n) {
   return `Stwórz quiz z dokładnie ${n} pytaniami na podstawie powyższego materiału.
 Zwróć TYLKO czysty JSON (bez żadnego tekstu przed ani po), w tym formacie:
-{"title":"Tytuł quizu","questions":[{"question":"Treść pytania?","answers":["A","B","C","D"],"correct":0}]}
+{"title":"Tytuł quizu","description":"Krótki opis zakresu quizu","questions":[{"question":"Treść pytania?","answers":["A","B","C","D"],"correct":0}]}
 Zasady: dokładnie 4 odpowiedzi, "correct" = indeks (0-3) poprawnej, pytania po polsku, oparte ściśle na materiale, odpowiedzi wiarygodne ale mylące.`;
 }
 
@@ -592,6 +621,7 @@ function closeModal() {
 //  POMOCNICZE
 // ============================================================
 function goTo(pageId) {
+  closeModal();
   document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === pageId));
   if (pageId === 'library-page') renderLibrary();
   window.scrollTo(0, 0);
