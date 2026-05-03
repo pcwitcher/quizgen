@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuizGen AI</title>
+<link rel="icon" href="favicon.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#1a472a 0%,#2d6a4f 50%,#40916c 100%);min-height:100vh;color:#1b1b1b;}
+  .page{display:none;}
+  .page.active{display:block;}
+  .wrap{max-width:700px;margin:0 auto;padding:20px;}
+  .card{background:#fff;border-radius:20px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,0.18);}
+
+  /* NAV */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 20px;}
+  .logo{display:flex;align-items:center;gap:10px;color:#fff;font-size:1.4rem;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,0.25);}
+  .logo-icon{font-size:28px;}
+  .nav-link{color:#d8f3dc;font-size:.9rem;font-weight:700;cursor:pointer;padding:6px 14px;border-radius:8px;border:none;background:rgba(255,255,255,0.15);transition:background .2s;}
+  .nav-link:hover{background:rgba(255,255,255,0.25);}
+
+  /* BUTTONS */
+  .btn{display:inline-block;padding:12px 28px;font-size:.95rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:transform .15s,box-shadow .15s;font-family:'Nunito',sans-serif;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,0,0,0.18);}
+  .btn-primary{background:linear-gradient(135deg,#52b788,#2d6a4f);color:#fff;}
+  .btn-secondary{background:#fff;color:#2d6a4f;border:2px solid #dee2e6;}
+  .btn-danger{background:#dc3545;color:#fff;}
+  .btn-block{width:100%;margin-top:16px;padding:14px;font-size:1rem;}
+
+  /* LIBRARY */
+  #library-page .header{text-align:center;padding:10px 0 28px;}
+  #library-page .header h1{color:#fff;font-size:1.9rem;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,0.25);margin-bottom:6px;}
+  #library-page .header p{color:#d8f3dc;font-size:.95rem;}
+  .new-quiz-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:rgba(255,255,255,0.15);border:2px dashed rgba(255,255,255,0.5);border-radius:16px;color:#fff;font-size:1.05rem;font-weight:700;cursor:pointer;transition:background .2s;margin-bottom:20px;font-family:'Nunito',sans-serif;}
+  .new-quiz-btn:hover{background:rgba(255,255,255,0.22);}
+  .quiz-list{display:flex;flex-direction:column;gap:12px;}
+  .quiz-item{background:#fff;border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(0,0,0,0.12);cursor:pointer;transition:transform .15s,box-shadow .15s;}
+  .quiz-item:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.18);}
+  .quiz-thumb{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#52b788,#1b4332);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+  .quiz-info{flex:1;min-width:0;}
+  .quiz-title{font-weight:800;font-size:1rem;color:#1b2d20;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .quiz-meta{font-size:.8rem;color:#6c757d;margin-top:2px;}
+  .quiz-actions{display:flex;gap:6px;flex-shrink:0;}
+  .btn-play{background:#52b788;color:#fff;padding:8px 16px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;}
+  .btn-del{background:#fee2e2;color:#dc3545;padding:8px 10px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;}
+  .btn-del:hover{background:#dc3545;color:#fff;}
+  .empty-state{text-align:center;padding:48px 20px;color:#d8f3dc;}
+  .empty-icon{font-size:48px;margin-bottom:12px;}
+  .empty-text{font-size:1rem;font-weight:600;}
+
+  /* GENERATOR */
+  #gen-page .header{text-align:center;padding:10px 0 24px;}
+  #gen-page .header h2{color:#fff;font-size:1.6rem;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,0.25);}
+  .mode-tabs{display:flex;gap:6px;background:#f1f3f4;border-radius:12px;padding:4px;margin-bottom:22px;}
+  .tab{flex:1;padding:10px;border:none;background:transparent;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;color:#6c757d;transition:all .2s;}
+  .tab.active{background:#fff;color:#2d6a4f;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+  label{display:block;font-size:.8rem;font-weight:700;color:#495057;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
+  input[type=text],textarea{width:100%;padding:12px 14px;border:2px solid #dee2e6;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s;color:#1b1b1b;}
+  input[type=text]:focus,textarea:focus{border-color:#52b788;}
+  textarea{resize:vertical;min-height:90px;}
+  .drop-zone{border:2px dashed #dee2e6;border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+  .drop-zone:hover,.drop-zone.drag{border-color:#52b788;background:#f0faf5;}
+  .drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .drop-icon{font-size:30px;margin-bottom:6px;}
+  .drop-text{color:#6c757d;font-size:.9rem;}
+  .drop-text strong{color:#2d6a4f;}
+  .previews{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .preview-wrap{position:relative;display:inline-block;}
+  .preview-img{width:68px;height:68px;object-fit:cover;border-radius:8px;border:2px solid #dee2e6;display:block;}
+  .preview-wrap button{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#dc3545;color:#fff;border:none;font-size:10px;cursor:pointer;line-height:18px;padding:0;font-weight:700;}
+  .count-row{display:flex;align-items:center;gap:12px;margin-top:18px;}
+  .count-row label{margin:0;white-space:nowrap;}
+  input[type=range]{flex:1;accent-color:#52b788;}
+  .count-val{font-weight:800;color:#2d6a4f;min-width:28px;text-align:right;}
+  .error-box{background:#f8d7da;border:1px solid #f5c6cb;border-radius:12px;padding:12px 14px;color:#721c24;font-size:.9rem;margin-top:12px;}
+  .back-btn{color:#d8f3dc;font-size:.85rem;font-weight:700;cursor:pointer;background:none;border:none;font-family:'Nunito',sans-serif;margin-bottom:4px;display:flex;align-items:center;gap:4px;}
+  .back-btn:hover{color:#fff;}
+
+  /* LOADING */
+  #loading-page{text-align:center;padding:100px 20px;}
+  .spinner{width:56px;height:56px;border:4px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-text{color:#fff;font-size:1.1rem;font-weight:700;}
+  .loading-sub{color:#d8f3dc;font-size:.9rem;margin-top:8px;}
+
+  /* QUIZ */
+  #quiz-page{padding:10px 0;}
+  .quiz-card{background:#fff;border-radius:20px;padding:32px 26px;box-shadow:0 8px 32px rgba(0,0,0,0.18);animation:fadeIn .35s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+  .progress-bar{background:#e9ecef;border-radius:8px;height:8px;margin-bottom:18px;overflow:hidden;}
+  .progress-fill{background:linear-gradient(90deg,#52b788,#2d6a4f);height:100%;border-radius:8px;transition:width .4s ease;}
+  .q-counter{font-size:.82rem;color:#6c757d;margin-bottom:6px;font-weight:700;}
+  .q-text{font-size:1.15rem;font-weight:700;line-height:1.5;margin-bottom:20px;color:#212529;}
+  .answers{display:flex;flex-direction:column;gap:10px;}
+  .ans-btn{width:100%;text-align:left;padding:13px 16px;font-size:.95rem;background:#f8f9fa;border:2px solid #dee2e6;border-radius:12px;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;font-weight:600;color:#1b1b1b;}
+  .ans-btn:hover:not(.disabled){background:#e8f5e9;border-color:#52b788;}
+  .ans-btn.correct{background:#d4edda;border-color:#28a745;color:#155724;}
+  .ans-btn.wrong{background:#f8d7da;border-color:#dc3545;color:#721c24;}
+  .ans-btn.disabled{cursor:default;opacity:.7;}
+  .ans-btn.disabled.correct{opacity:1;}
+  .next-area{text-align:center;margin-top:18px;}
+
+  /* RESULT */
+  #result-page{padding:16px 0;}
+  .result-card{background:#fff;border-radius:20px;padding:36px 26px;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:center;}
+  .score-circle{width:130px;height:130px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:2.1rem;font-weight:800;color:#fff;}
+  .score-good{background:linear-gradient(135deg,#28a745,#52b788);}
+  .score-mid{background:linear-gradient(135deg,#ffc107,#fd7e14);}
+  .score-bad{background:linear-gradient(135deg,#dc3545,#e74c3c);}
+  .res-title{font-size:1.5rem;font-weight:800;margin-bottom:6px;}
+  .res-sub{color:#6c757d;margin-bottom:24px;}
+  .res-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .review{margin-top:22px;text-align:left;}
+  .rv-item{background:#f8f9fa;border-radius:12px;padding:14px;margin-bottom:10px;border-left:4px solid #dee2e6;}
+  .rv-item.ok{border-left-color:#28a745;}
+  .rv-item.bad{border-left-color:#dc3545;}
+  .rv-q{font-weight:700;margin-bottom:4px;font-size:.9rem;}
+  .rv-a{font-size:.85rem;color:#495057;}
+  .correct-lbl{color:#28a745;font-weight:700;}
+  .wrong-lbl{color:#dc3545;}
+  .hidden{display:none;}
+
+  /* Confirm modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+  .modal{background:#fff;border-radius:16px;padding:28px;max-width:360px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,0.3);}
+  .modal h3{font-size:1.2rem;font-weight:800;margin-bottom:8px;}
+  .modal p{color:#6c757d;font-size:.9rem;margin-bottom:22px;}
+  .modal-btns{display:flex;gap:10px;justify-content:center;}
+
+  @media(max-width:500px){
+    .wrap{padding:12px;}
+    .quiz-card{padding:22px 16px;}
+    .q-text{font-size:1rem;}
+    .quiz-item{padding:14px;}
+    .res-btns{flex-direction:column;align-items:center;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================================================
+  STRONA: BIBLIOTEKA QUIZÓW
+================================================ -->
+<div id="library-page" class="page active">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo"><span class="logo-icon">🧠</span> QuizGen AI</div>
+    </div>
+    <div class="header">
+      <h1>Moje Quizy</h1>
+      <p id="lib-count">Ładowanie...</p>
+    </div>
+    <button class="new-quiz-btn" onclick="goTo('gen-page')">
+      <span style="font-size:22px">➕</span> Utwórz nowy quiz
+    </button>
+    <div class="quiz-list" id="quiz-list"></div>
+  </div>
+</div>
+
+<!-- ================================================
+  STRONA: GENERATOR
+================================================ -->
+<div id="gen-page" class="page">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo"><span class="logo-icon">🧠</span> QuizGen AI</div>
+      <button class="nav-link" onclick="goTo('library-page')">← Biblioteka</button>
+    </div>
+    <div class="header"><h2>Utwórz nowy quiz</h2></div>
+    <div class="card">
+      <div class="mode-tabs">
+        <button class="tab active" onclick="switchTab('photo')">📷 Zdjęcia</button>
+        <button class="tab" onclick="switchTab('topic')">✏️ Temat</button>
+      </div>
+
+      <div id="tab-photo" class="tab-panel active">
+        <label>Zdjęcia notatek / stron podręcznika (maks. 5)</label>
+        <div class="drop-zone" id="drop-zone">
+          <input type="file" id="file-input" accept="image/*" multiple onchange="handleFiles(this.files)">
+          <div class="drop-icon">📸</div>
+          <div class="drop-text"><strong>Kliknij lub przeciągnij</strong> zdjęcia tutaj<br><span style="font-size:.8rem">JPG, PNG, WEBP</span></div>
+        </div>
+        <div class="previews" id="previews"></div>
+      </div>
+
+      <div id="tab-topic" class="tab-panel">
+        <label>Tytuł quizu</label>
+        <input type="text" id="topic-title" placeholder="np. Fotosynteza, Pierwsza wojna światowa...">
+        <div style="margin-top:14px;">
+          <label>Szczegóły (opcjonalnie)</label>
+          <textarea id="topic-text" placeholder="Dodaj szczegóły, zakres materiału..."></textarea>
+        </div>
+      </div>
+
+      <div class="count-row">
+        <label>Liczba pytań:</label>
+        <input type="range" id="q-count" min="3" max="20" value="10" oninput="document.getElementById('q-count-val').textContent=this.value">
+        <span class="count-val" id="q-count-val">10</span>
+      </div>
+
+      <div id="gen-error" class="error-box hidden"></div>
+      <button class="btn btn-primary btn-block" onclick="generateQuiz()">🚀 Generuj Quiz</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+  STRONA: ŁADOWANIE
+================================================ -->
+<div id="loading-page" class="page">
+  <div class="wrap">
+    <div class="spinner"></div>
+    <div class="loading-text">Generuję pytania...</div>
+    <div class="loading-sub">AI analizuje materiał, chwilę cierpliwości</div>
+  </div>
+</div>
+
+<!-- ================================================
+  STRONA: QUIZ
+================================================ -->
+<div id="quiz-page" class="page">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo"><span class="logo-icon">🧠</span> QuizGen AI</div>
+      <button class="nav-link" onclick="confirmExit()">✕ Zakończ</button>
+    </div>
+    <div class="quiz-card">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="q-counter" id="q-counter"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="answers" id="answers"></div>
+      <div class="next-area hidden" id="next-area">
+        <button class="btn btn-primary" onclick="nextQuestion()">Następne pytanie →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+  STRONA: WYNIKI
+================================================ -->
+<div id="result-page" class="page">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo"><span class="logo-icon">🧠</span> QuizGen AI</div>
+    </div>
+    <div class="result-card">
+      <div class="score-circle" id="score-circle"></div>
+      <div class="res-title" id="res-title"></div>
+      <div class="res-sub" id="res-sub"></div>
+      <div class="res-btns">
+        <button class="btn btn-primary" onclick="restartCurrentQuiz()">🔄 Zagraj ponownie</button>
+        <button class="btn btn-secondary" onclick="toggleReview()">📋 Odpowiedzi</button>
+        <button class="btn btn-secondary" onclick="goTo('library-page')">🏠 Biblioteka</button>
+      </div>
+      <div class="review hidden" id="review"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal">
+    <h3 id="modal-title"></h3>
+    <p id="modal-msg"></p>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" onclick="closeModal()">Anuluj</button>
+      <button class="btn btn-danger" id="modal-confirm">Usuń</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  KONFIGURACJA — zmień WORKER_URL na swój adres Cloudflare Worker
+// ============================================================
+const WORKER_URL = 'https://TWÓJ-WORKER.TWOJA-DOMENA.workers.dev';
+
+// ============================================================
+//  STORAGE — quizy w localStorage
+// ============================================================
+const STORAGE_KEY = 'quizgen_library';
+
+function loadLibrary() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveLibrary(lib) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(lib));
+}
+
+function saveQuiz(quizData) {
+  const lib = loadLibrary();
+  const entry = {
+    id: Date.now().toString(),
+    title: quizData.title || 'Quiz',
+    description: quizData.description || '',
+    count: quizData.questions.length,
+    created: new Date().toLocaleDateString('pl-PL'),
+    questions: quizData.questions
+  };
+  lib.unshift(entry);
+  saveLibrary(lib);
+  return entry;
+}
+
+function deleteQuiz(id) {
+  const lib = loadLibrary().filter(q => q.id !== id);
+  saveLibrary(lib);
+}
+
+// ============================================================
+//  BIBLIOTEKA
+// ============================================================
+function renderLibrary() {
+  const lib = loadLibrary();
+  const list = document.getElementById('quiz-list');
+  const count = document.getElementById('lib-count');
+
+  count.textContent = lib.length
+    ? `Masz ${lib.length} quiz${lib.length === 1 ? '' : lib.length < 5 ? 'y' : 'ów'}`
+    : '';
+
+  list.innerHTML = '';
+
+  if (!lib.length) {
+    list.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📚</div>
+      <div class="empty-text">Nie masz jeszcze żadnych quizów.<br>Utwórz pierwszy!</div>
+    </div>`;
+    return;
+  }
+
+  const emojis = ['🌿','🔬','📖','🌍','⚗️','🧬','📐','🏛️','🎯','🦋'];
+  lib.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-item';
+    div.innerHTML = `
+      <div class="quiz-thumb">${emojis[i % emojis.length]}</div>
+      <div class="quiz-info">
+        <div class="quiz-title">${esc(q.title)}</div>
+        <div class="quiz-meta">${q.count} pytań &nbsp;·&nbsp; ${q.created}</div>
+      </div>
+      <div class="quiz-actions">
+        <button class="btn-play" onclick="event.stopPropagation();playQuiz('${q.id}')">▶ Graj</button>
+        <button class="btn-del" onclick="event.stopPropagation();confirmDelete('${q.id}','${esc(q.title)}')">🗑</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+// ============================================================
+//  GENERATOR
+// ============================================================
+let mode = 'photo';
+let uploadedImages = [];
+
+function switchTab(t) {
+  mode = t;
+  document.querySelectorAll('.tab').forEach((b, i) => b.classList.toggle('active', (i===0&&t==='photo')||(i===1&&t==='topic')));
+  document.getElementById('tab-photo').classList.toggle('active', t === 'photo');
+  document.getElementById('tab-topic').classList.toggle('active', t === 'topic');
+}
+
+function handleFiles(files) {
+  const arr = Array.from(files).slice(0, 5);
+  uploadedImages = [];
+  renderPreviews(arr);
+}
+
+function renderPreviews(arr) {
+  const previews = document.getElementById('previews');
+  previews.innerHTML = '';
+  arr.forEach((f, i) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      uploadedImages[i] = e.target.result;
+      const wrap = document.createElement('div');
+      wrap.className = 'preview-wrap';
+      wrap.innerHTML = `<img src="${e.target.result}" class="preview-img"><button onclick="removeImg(${i})">✕</button>`;
+      previews.appendChild(wrap);
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+function removeImg(i) {
+  uploadedImages.splice(i, 1);
+  document.getElementById('file-input').value = '';
+  const previews = document.getElementById('previews');
+  previews.innerHTML = '';
+  uploadedImages.forEach((src, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'preview-wrap';
+    wrap.innerHTML = `<img src="${src}" class="preview-img"><button onclick="removeImg(${idx})">✕</button>`;
+    previews.appendChild(wrap);
+  });
+}
+
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
+
+async function generateQuiz() {
+  const errBox = document.getElementById('gen-error');
+  errBox.classList.add('hidden');
+  const n = parseInt(document.getElementById('q-count').value);
+  let messages;
+
+  if (mode === 'photo') {
+    if (!uploadedImages.length) { showErr('Dodaj przynajmniej jedno zdjęcie!'); return; }
+    const content = uploadedImages.map(src => {
+      const [meta, data] = src.split(',');
+      const mt = meta.match(/:(.*?);/)[1];
+      return { type: 'image', source: { type: 'base64', media_type: mt, data } };
+    });
+    content.push({ type: 'text', text: buildPrompt(n) });
+    messages = [{ role: 'user', content }];
+  } else {
+    const title = document.getElementById('topic-title').value.trim();
+    const details = document.getElementById('topic-text').value.trim();
+    if (!title) { showErr('Wpisz temat quizu!'); return; }
+    const txt = `Temat: ${title}${details ? '\n\nSzczegóły: ' + details : ''}`;
+    messages = [{ role: 'user', content: txt + '\n\n' + buildPrompt(n) }];
+  }
+
+  goTo('loading-page');
+
+  try {
+    const resp = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        system: 'Jesteś ekspertem od tworzenia quizów edukacyjnych. Odpowiadasz WYŁĄCZNIE czystym JSON-em bez żadnych komentarzy ani markdown.',
+        messages
+      })
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    let text = data.content.map(c => c.text || '').join('');
+    text = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(text);
+    if (!parsed.questions || !parsed.questions.length) throw new Error('Brak pytań w odpowiedzi.');
+
+    const saved = saveQuiz(parsed);
+    playQuiz(saved.id);
+  } catch (e) {
+    goTo('gen-page');
+    showErr('Błąd generowania: ' + e.message);
+  }
+}
+
+function buildPrompt(n) {
+  return `Stwórz quiz z dokładnie ${n} pytaniami na podstawie powyższego materiału.
+Zwróć TYLKO czysty JSON (bez żadnego tekstu przed ani po), w tym formacie:
+{"title":"Tytuł quizu","questions":[{"question":"Treść pytania?","answers":["A","B","C","D"],"correct":0}]}
+Zasady: dokładnie 4 odpowiedzi, "correct" = indeks (0-3) poprawnej, pytania po polsku, oparte ściśle na materiale, odpowiedzi wiarygodne ale mylące.`;
+}
+
+// ============================================================
+//  QUIZ
+// ============================================================
+let activeQuizId = null;
+let activeQuestions = [];
+let shuffledQ = [];
+let currentIndex = 0;
+let score = 0;
+let userAnswers = [];
+
+function playQuiz(id) {
+  const lib = loadLibrary();
+  const entry = lib.find(q => q.id === id);
+  if (!entry) return;
+  activeQuizId = id;
+  activeQuestions = entry.questions;
+  startQuiz();
+}
+
+function startQuiz() {
+  currentIndex = 0; score = 0; userAnswers = [];
+  shuffledQ = shuffle([...activeQuestions]);
+  goTo('quiz-page');
+  renderQ();
+}
+
+function restartCurrentQuiz() { startQuiz(); }
+
+function renderQ() {
+  const q = shuffledQ[currentIndex];
+  const total = shuffledQ.length;
+  document.getElementById('progress-fill').style.width = ((currentIndex / total) * 100) + '%';
+  document.getElementById('q-counter').textContent = `Pytanie ${currentIndex + 1} z ${total}`;
+  document.getElementById('q-text').textContent = q.question;
+  const correct = q.answers[q.correct];
+  const sh = shuffle([...q.answers]);
+  const list = document.getElementById('answers');
+  list.innerHTML = '';
+  sh.forEach(txt => {
+    const b = document.createElement('button');
+    b.className = 'ans-btn';
+    b.textContent = txt;
+    b.onclick = () => pick(b, txt, correct, q);
+    list.appendChild(b);
+  });
+  document.getElementById('next-area').classList.add('hidden');
+}
+
+function pick(btn, sel, correct, q) {
+  document.querySelectorAll('.ans-btn').forEach(b => { b.classList.add('disabled'); b.onclick = null; });
+  const ok = sel === correct;
+  if (ok) { btn.classList.add('correct'); score++; }
+  else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.ans-btn').forEach(b => { if (b.textContent === correct) b.classList.add('correct'); });
+  }
+  userAnswers.push({ question: q.question, selected: sel, correct, isCorrect: ok });
+  if (currentIndex < shuffledQ.length - 1) document.getElementById('next-area').classList.remove('hidden');
+  else setTimeout(showResult, 700);
+}
+
+function nextQuestion() { currentIndex++; renderQ(); }
+
+function showResult() {
+  goTo('result-page');
+  const total = shuffledQ.length;
+  const pct = Math.round((score / total) * 100);
+  const c = document.getElementById('score-circle');
+  c.textContent = score + '/' + total;
+  c.className = 'score-circle ' + (pct >= 70 ? 'score-good' : pct >= 40 ? 'score-mid' : 'score-bad');
+  let title, sub;
+  if (pct >= 90) { title = 'Doskonale! 🏆'; sub = 'Znakomita znajomość materiału!'; }
+  else if (pct >= 70) { title = 'Bardzo dobrze! 🎉'; sub = 'Niewiele brakowało do perfekcji.'; }
+  else if (pct >= 50) { title = 'Nieźle! 📚'; sub = 'Jest jeszcze nad czym popracować.'; }
+  else { title = 'Spróbuj ponownie 💪'; sub = 'Powtórz materiał i wróć do quizu!'; }
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-sub').textContent = sub;
+  document.getElementById('review').classList.add('hidden');
+}
+
+function toggleReview() {
+  const s = document.getElementById('review');
+  if (!s.classList.contains('hidden')) { s.classList.add('hidden'); return; }
+  s.innerHTML = '';
+  userAnswers.forEach((a, i) => {
+    const d = document.createElement('div');
+    d.className = 'rv-item ' + (a.isCorrect ? 'ok' : 'bad');
+    d.innerHTML = `<div class="rv-q">${i+1}. ${esc(a.question)}</div><div class="rv-a">` +
+      (a.isCorrect
+        ? `<span class="correct-lbl">✓ ${esc(a.selected)}</span>`
+        : `<span class="wrong-lbl">✗ Twoja: ${esc(a.selected)}</span><br><span class="correct-lbl">✓ Poprawna: ${esc(a.correct)}</span>`
+      ) + '</div>';
+    s.appendChild(d);
+  });
+  s.classList.remove('hidden');
+}
+
+// ============================================================
+//  MODAL
+// ============================================================
+let pendingDeleteId = null;
+
+function confirmDelete(id, title) {
+  pendingDeleteId = id;
+  document.getElementById('modal-title').textContent = 'Usuń quiz';
+  document.getElementById('modal-msg').textContent = `Czy na pewno chcesz usunąć "${title}"? Tej operacji nie można cofnąć.`;
+  document.getElementById('modal-confirm').onclick = () => { deleteQuiz(pendingDeleteId); closeModal(); renderLibrary(); };
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function confirmExit() {
+  document.getElementById('modal-title').textContent = 'Zakończyć quiz?';
+  document.getElementById('modal-msg').textContent = 'Twój postęp zostanie utracony.';
+  document.getElementById('modal-confirm').textContent = 'Zakończ';
+  document.getElementById('modal-confirm').onclick = () => { closeModal(); goTo('library-page'); };
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden');
+  document.getElementById('modal-confirm').textContent = 'Usuń';
+}
+
+// ============================================================
+//  POMOCNICZE
+// ============================================================
+function goTo(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === pageId));
+  if (pageId === 'library-page') renderLibrary();
+  window.scrollTo(0, 0);
+}
+
+function showErr(msg) { const e = document.getElementById('gen-error'); e.textContent = msg; e.classList.remove('hidden'); }
+function shuffle(a) { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; }
+function esc(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+
+// Init
+renderLibrary();
+</script>
+</body>
+</html>
